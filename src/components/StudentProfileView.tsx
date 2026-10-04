@@ -22,6 +22,7 @@ interface StudentProfileViewProps {
   currentStreak: number;
   onNavigate: (screen: string) => void;
   onOpenStudentCard: () => void;
+  onResetData?: () => void;
 }
 
 const StudentProfileViewComponent: React.FC<StudentProfileViewProps> = ({
@@ -32,6 +33,7 @@ const StudentProfileViewComponent: React.FC<StudentProfileViewProps> = ({
   currentStreak,
   onNavigate,
   onOpenStudentCard,
+  onResetData,
 }) => {
   return (
     <div className="space-y-5 pb-6">
@@ -203,6 +205,17 @@ const StudentProfileViewComponent: React.FC<StudentProfileViewProps> = ({
           </div>
         </div>
       </div>
+
+      {onResetData && (
+        <button
+          type="button"
+          onClick={onResetData}
+          className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-red-200 bg-red-50 text-red-700 text-xs font-bold hover:bg-red-100 cursor-pointer"
+        >
+          <Settings className="w-4 h-4" />
+          Reset demo data
+        </button>
+      )}
     </div>
   );
 };

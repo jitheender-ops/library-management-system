@@ -17,6 +17,7 @@ interface ScanBookViewProps {
   onSelectBook: (book: Book) => void;
   onCheckOutBook?: (book: Book) => void;
   onCheckInBook?: (book: Book) => void;
+  onOpenCamera?: () => void;
 }
 
 const ScanBookViewComponent: React.FC<ScanBookViewProps> = ({
@@ -24,6 +25,7 @@ const ScanBookViewComponent: React.FC<ScanBookViewProps> = ({
   onSelectBook,
   onCheckOutBook,
   onCheckInBook,
+  onOpenCamera,
 }) => {
   const [scanMode, setScanMode] = useState<"checkout" | "checkin">("checkout");
   const [manualId, setManualId] = useState("");
@@ -108,6 +110,19 @@ const ScanBookViewComponent: React.FC<ScanBookViewProps> = ({
           <p className="text-xs text-slate-300 leading-relaxed">
             Place the QR code or barcode within the frame to check-in or check-out a book.
           </p>
+          {onOpenCamera && (
+            <button
+              type="button"
+              onClick={() => {
+                haptic.medium();
+                onOpenCamera();
+              }}
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:scale-95 text-white text-xs font-bold cursor-pointer"
+            >
+              <Camera className="w-4 h-4" />
+              Open Camera Scanner
+            </button>
+          )}
         </div>
       </div>
 

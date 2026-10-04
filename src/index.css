@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /* Custom "xs" breakpoint used by some components (e.g. Header) */
 @theme {

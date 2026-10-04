@@ -149,8 +149,13 @@ Return ONLY valid JSON matching this schema:
   }
 ]`;
 
-        // Recommended model for text generation: gemini-3.8-flash
-        const candidateModels = ["gemini-3.8-flash", "gemini-3.1-flash-lite"];
+        // Model fallback chain (override the first choice with GEMINI_MODEL)
+        const candidateModels = [
+          process.env.GEMINI_MODEL,
+          "gemini-3.8-flash",
+          "gemini-3.5-flash-lite",
+          "gemini-3.1-flash-lite",
+        ].filter((m): m is string => Boolean(m));
         let generatedText: string | null = null;
 
         for (const modelName of candidateModels) {

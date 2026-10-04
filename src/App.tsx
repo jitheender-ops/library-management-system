@@ -427,6 +427,19 @@ export default function App() {
     showToast(`Logged ${addedMinutes}m toward your daily reading goal!`);
   }, [streakData.lastCheckInDate, streakData.currentStreak, streakData.longestStreak, loans, catalog]);
 
+  // Reset all persisted demo data back to the initial dataset
+  const handleResetData = useCallback(() => {
+    if (!window.confirm("Reset all saved data (loans, reservations, streaks, fines)?")) return;
+    try {
+      Object.keys(window.localStorage)
+        .filter((k) => k.startsWith("lms:"))
+        .forEach((k) => window.localStorage.removeItem(k));
+    } catch {
+      /* ignore */
+    }
+    window.location.reload();
+  }, []);
+
   // Quick navigation
   const handleNavigate = useCallback((screen: string) => {
     haptic.selection();
@@ -524,6 +537,7 @@ export default function App() {
             onSelectBook={(b) => setSelectedBook(b)}
             onCheckOutBook={handleCheckOutBook}
             onCheckInBook={handleCheckInBook}
+            onOpenCamera={() => setScannerOpen(true)}
           />
         );
 
@@ -537,6 +551,7 @@ export default function App() {
             currentStreak={streakData.currentStreak}
             onNavigate={handleNavigate}
             onOpenStudentCard={() => setStudentCardOpen(true)}
+            onResetData={handleResetData}
           />
         );
 
