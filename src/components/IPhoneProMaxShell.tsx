@@ -41,7 +41,7 @@ export const IPhoneProMaxShell: React.FC<IPhoneProMaxShellProps> = ({
   const timeFormatted = `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 
   return (
-    <div className="w-full min-h-screen bg-stone-900/90 text-stone-900 flex flex-col items-center justify-start p-0 sm:py-6 selection:bg-blue-200">
+    <div className="w-full min-h-screen bg-stone-900/90 text-stone-900 flex flex-col items-center justify-start p-0 sm:py-6 pt-safe selection:bg-blue-200">
       {/* Top Floating Control Bar for switching between iPhone 18 Pro Max Frame and Full Width Mode */}
       <div className="hidden sm:flex items-center justify-between w-full max-w-4xl px-4 py-2.5 mb-3 bg-stone-800/80 backdrop-blur-md rounded-2xl border border-stone-700/50 text-white shadow-lg">
         <div className="flex items-center gap-2.5">
@@ -87,12 +87,12 @@ export const IPhoneProMaxShell: React.FC<IPhoneProMaxShellProps> = ({
       <div
         className={
           isSimulatorMode
-            ? "relative w-full max-w-[432px] min-h-[932px] bg-white rounded-none sm:rounded-[56px] shadow-2xl border-0 sm:border-[10px] sm:border-stone-800 ring-0 sm:ring-1 sm:ring-white/20 flex flex-col overflow-hidden transition-[max-width,border-radius] duration-200"
+            ? "relative w-full max-w-[432px] min-h-screen sm:min-h-[932px] bg-white rounded-none sm:rounded-[56px] shadow-2xl border-0 sm:border-[10px] sm:border-stone-800 ring-0 sm:ring-1 sm:ring-white/20 flex flex-col overflow-hidden transition-[max-width,border-radius] duration-200"
             : "w-full max-w-5xl bg-white rounded-none sm:rounded-3xl shadow-xl flex flex-col overflow-hidden transition-[max-width,border-radius] duration-200"
         }
       >
         {/* Dynamic Island & iOS Status Bar (Visible on mobile or in Simulator Mode) */}
-        <div className="sticky top-0 z-50 bg-stone-900 text-white select-none pt-2.5 pb-2 px-6">
+        <div className="hidden sm:block sticky top-0 z-50 bg-stone-900 text-white select-none pt-2.5 pb-2 px-6">
           {/* iOS Top Status Line */}
           <div className="flex items-center justify-between text-[13px] font-semibold tracking-tight">
             {/* Left Clock */}
@@ -197,7 +197,7 @@ export const IPhoneProMaxShell: React.FC<IPhoneProMaxShellProps> = ({
         </div>
 
         {/* iOS Native Home Indicator Pill Bar */}
-        <div className="sticky bottom-0 z-50 bg-white/90 backdrop-blur-xl pt-1 pb-1.5 flex justify-center pointer-events-none">
+        <div className="hidden sm:flex sticky bottom-0 z-50 bg-white/90 backdrop-blur-xl pt-1 pb-1.5 justify-center pointer-events-none">
           <div className="w-36 h-1 bg-stone-900/40 rounded-full" />
         </div>
       </div>

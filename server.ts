@@ -6,11 +6,45 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const PORT = 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
 async function startServer() {
   const app = express();
-  app.use(express.json());
+  app.disable("x-powered-by");
+  app.use(express.json({ limit: "2mb" }));
+
+  // Basic security headers
+  app.use((_req, res, next) => {
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
+    res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+    res.setHeader("Permissions-Policy", "camera=(self), microphone=()");
+    next();
+  });
+
+  // Tiny in-memory rate limiter for the AI endpoint (30 req/min per IP)
+  const hits = new Map<string, { count: number; reset: number }>();
+  const rateLimit: express.RequestHandler = (req, res, next) => {
+    const key = req.ip || "unknown";
+    const now = Date.now();
+    const entry = hits.get(key);
+    if (!entry || entry.reset < now) {
+      hits.set(key, { count: 1, reset: now + 60_000 });
+      return next();
+    }
+    if (++entry.count > 30) {
+      res.setHeader("Retry-After", String(Math.ceil((entry.reset - now) / 1000)));
+      return res.status(429).json({ error: "Too many requests. Please try again shortly." });
+    }
+    next();
+  };
+  setInterval(() => {
+    const now = Date.now();
+    for (const [k, v] of hits) if (v.reset < now) hits.delete(k);
+  }, 60_000).unref();
+
+  const asStringArray = (v: unknown, max: number) =>
+    Array.isArray(v) ? v.filter((x) => typeof x === "string").map((x) => x.slice(0, 80)).slice(0, max) : [];
 
   // Server-side Gemini client helper
   const getGeminiClient = () => {
@@ -72,14 +106,13 @@ async function startServer() {
   };
 
   // API Route: Recommendations based on student interests and reading history
-  app.post("/api/recommendations", async (req, res) => {
-    const {
-      interests = [],
-      major = "General Studies",
-      recentBooks = [],
-      customPrompt = "",
-      catalog = [],
-    } = req.body || {};
+  app.post("/api/recommendations", rateLimit, async (req, res) => {
+    const body = req.body || {};
+    const interests = asStringArray(body.interests, 20);
+    const recentBooks = asStringArray(body.recentBooks, 20);
+    const major = typeof body.major === "string" ? body.major.slice(0, 100) : "General Studies";
+    const customPrompt = typeof body.customPrompt === "string" ? body.customPrompt.slice(0, 500) : "";
+    const catalog = Array.isArray(body.catalog) ? body.catalog.slice(0, 200) : [];
 
     try {
       const ai = getGeminiClient();
@@ -190,6 +223,12 @@ Return ONLY valid JSON matching this schema:
       res.sendFile(path.join(distPath, "index.html"));
     });
   }
+
+  // JSON error handler (malformed bodies etc.)
+  app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+    const status = err?.status || err?.statusCode || 500;
+    res.status(status).json({ error: status === 500 ? "Internal server error" : err.message });
+  });
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);

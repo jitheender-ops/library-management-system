@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from "react";
+import React, { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import { haptic, initGlobalHapticFeedback } from "./utils/haptics";
 import {
   INITIAL_BOOKS,
@@ -24,6 +24,8 @@ import {
   AdminCirculationStats,
 } from "./types";
 import { getDaysRemaining } from "./utils/barcode";
+import { toLocalDateStr } from "./utils/date";
+import { usePersistedState } from "./hooks/usePersistedState";
 import { Header, ScreenId } from "./components/Header";
 import { MobileBottomBar } from "./components/MobileBottomBar";
 import { HomeDashboardView } from "./components/HomeDashboardView";
@@ -47,14 +49,14 @@ import { SideSectionNavigation } from "./components/SideSectionNavigation";
 import { SECTIONS_METADATA } from "./components/Header";
 
 export default function App() {
-  const [catalog, setCatalog] = useState<Book[]>(INITIAL_BOOKS);
-  const [student, setStudent] = useState<StudentProfile>(INITIAL_STUDENT);
-  const [loans, setLoans] = useState<Loan[]>(INITIAL_LOANS);
-  const [reservations, setReservations] = useState<Reservation[]>(INITIAL_RESERVATIONS);
-  const [readingHistory, setReadingHistory] = useState<ReadingHistoryItem[]>(INITIAL_READING_HISTORY);
-  const [streakData, setStreakData] = useState<ReadingStreakData>(INITIAL_STREAK_DATA);
-  const [notifications, setNotifications] = useState<LibraryNotification[]>(INITIAL_NOTIFICATIONS);
-  const [fineSummary, setFineSummary] = useState<LibraryFineSummary>(INITIAL_FINE_SUMMARY);
+  const [catalog, setCatalog] = usePersistedState<Book[]>("catalog", INITIAL_BOOKS);
+  const [student, setStudent] = usePersistedState<StudentProfile>("student", INITIAL_STUDENT);
+  const [loans, setLoans] = usePersistedState<Loan[]>("loans", INITIAL_LOANS);
+  const [reservations, setReservations] = usePersistedState<Reservation[]>("reservations", INITIAL_RESERVATIONS);
+  const [readingHistory, setReadingHistory] = usePersistedState<ReadingHistoryItem[]>("history", INITIAL_READING_HISTORY);
+  const [streakData, setStreakData] = usePersistedState<ReadingStreakData>("streak", INITIAL_STREAK_DATA);
+  const [notifications, setNotifications] = usePersistedState<LibraryNotification[]>("notifications", INITIAL_NOTIFICATIONS);
+  const [fineSummary, setFineSummary] = usePersistedState<LibraryFineSummary>("fines", INITIAL_FINE_SUMMARY);
   const [adminStats, setAdminStats] = useState<AdminCirculationStats>(INITIAL_ADMIN_STATS);
 
   // Screen selection & Left Side Section state
@@ -97,11 +99,17 @@ export default function App() {
   const [studentCardOpen, setStudentCardOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const showToast = (msg: string) => {
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showToast = useCallback((msg: string) => {
     haptic.light();
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 4000);
-  };
+    // Reset any pending timer so an older toast can't dismiss a newer one early
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = setTimeout(() => setToastMessage(null), 4000);
+  }, []);
+  useEffect(() => () => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+  }, []);
 
   // Sets for rapid lookups
   const reservedBookIds = useMemo(
@@ -126,7 +134,7 @@ export default function App() {
     setIsReadingTimerActive(isRunning);
   }, []);
 
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = toLocalDateStr();
   const todayMinutesRead = useMemo(() => {
     return streakData.history
       .filter((h) => h.date === todayStr)
@@ -217,7 +225,7 @@ export default function App() {
         title: book.title,
         author: book.author,
         category: book.category,
-        completedAt: new Date().toISOString().split("T")[0],
+        completedAt: toLocalDateStr(),
         rating: 5,
         notes: `Returned on ${new Date().toLocaleDateString()}. Completed loan.`,
       };
@@ -261,8 +269,8 @@ export default function App() {
       bookId: book.id,
       studentId: student.id,
       studentName: student.name,
-      borrowedAt: new Date().toISOString().split("T")[0],
-      dueDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+      borrowedAt: toLocalDateStr(),
+      dueDate: toLocalDateStr(new Date(Date.now() + 14 * 24 * 60 * 60 * 1000)),
       status: "active",
       renewalCount: 0,
       maxRenewals: 2,
@@ -334,7 +342,7 @@ export default function App() {
     newCheckIn: Omit<ReadingStreakCheckIn, "id" | "timestamp" | "verified">
   ) => {
     haptic.success();
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = toLocalDateStr();
     const isAlreadyLoggedToday = streakData.lastCheckInDate === todayStr;
 
     const fullCheckIn: ReadingStreakCheckIn = {
@@ -383,7 +391,7 @@ export default function App() {
 
   const handleQuickAddReadingTime = useCallback((addedMinutes: number) => {
     haptic.medium();
-    const todayStr = new Date().toISOString().split("T")[0];
+    const todayStr = toLocalDateStr();
     const isAlreadyLoggedToday = streakData.lastCheckInDate === todayStr;
     const nextStreak = isAlreadyLoggedToday ? streakData.currentStreak : streakData.currentStreak + 1;
     const nextLongest = Math.max(streakData.longestStreak, nextStreak);

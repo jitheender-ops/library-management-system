@@ -1,3 +1,4 @@
+import { toLocalDateStr } from "../utils/date";
 import {
   Book,
   StudentProfile,
@@ -816,7 +817,7 @@ export const AVAILABLE_INTEREST_TAGS = [
 
 const ONE_DAY = 24 * 60 * 60 * 1000;
 const now = Date.now();
-const dateStr = (msOffset: number) => new Date(now - msOffset).toISOString().split("T")[0];
+const dateStr = (msOffset: number) => toLocalDateStr(new Date(now - msOffset));
 
 export const INITIAL_STREAK_DATA: ReadingStreakData = {
   currentStreak: 4,

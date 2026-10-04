@@ -1,1 +1,36 @@
 @import "tailwindcss";
+
+/* Custom "xs" breakpoint used by some components (e.g. Header) */
+@theme {
+  --breakpoint-xs: 22rem;
+}
+
+/* iOS / Android notch & gesture-bar safe-area helpers */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent iOS Safari zooming into focused inputs (needs >= 16px) */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}

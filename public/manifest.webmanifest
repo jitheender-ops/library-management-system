@@ -1,0 +1,13 @@
+{
+  "name": "Student Library Portal",
+  "short_name": "Library",
+  "description": "Catalog search, reservations, barcode scanning and reading streaks.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F2F2F7",
+  "theme_color": "#1c1917",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

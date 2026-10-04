@@ -19,6 +19,7 @@ import { Book, Loan, ReadingStreakCheckIn, ReadingStreakData } from "../types";
 import { haptic } from "../utils/haptics";
 import { ReadingTimer } from "./ReadingTimer";
 import { DailyReadingGoalProgress } from "./DailyReadingGoalProgress";
+import { toLocalDateStr } from "../utils/date";
 
 interface StreakViewProps {
   streakData: ReadingStreakData;
@@ -41,7 +42,7 @@ const StreakViewComponent: React.FC<StreakViewProps> = ({
   onQuickAddReadingMinutes,
   onTimerTick,
 }) => {
-  const todayStr = new Date().toISOString().split("T")[0];
+  const todayStr = toLocalDateStr();
   const isTodayCompleted = streakData.lastCheckInDate === todayStr;
 
   // Calculate total reading minutes logged today from streak history
@@ -170,7 +171,7 @@ const StreakViewComponent: React.FC<StreakViewProps> = ({
   const weekDays = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
     d.setDate(d.getDate() - (6 - i));
-    const dStr = d.toISOString().split("T")[0];
+    const dStr = toLocalDateStr(d);
     const dayName = d.toLocaleDateString("en-US", { weekday: "short" });
     const isToday = dStr === todayStr;
     const hasCheckIn = streakData.history.some((h) => h.date === dStr);
