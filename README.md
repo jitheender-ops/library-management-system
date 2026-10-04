@@ -20,3 +20,20 @@ npm run build && npm start
 
 ## Scripts
 `npm run lint` (type-check) · `npm test` (unit tests)
+
+## Mobile screenshots (390×844)
+| Home | Search | AI Advisor | Borrowed |
+|---|---|---|---|
+| ![](docs/screenshots/01-home.png) | ![](docs/screenshots/02-search.png) | ![](docs/screenshots/03-ai-advisor.png) | ![](docs/screenshots/04-borrowed.png) |
+
+| Holds | Streak | Fines | Scan |
+|---|---|---|---|
+| ![](docs/screenshots/05-reservations.png) | ![](docs/screenshots/06-streak.png) | ![](docs/screenshots/07-fines.png) | ![](docs/screenshots/08-scan.png) |
+
+| Alerts | Profile | Admin | Menu |
+|---|---|---|---|
+| ![](docs/screenshots/09-notifications.png) | ![](docs/screenshots/10-profile.png) | ![](docs/screenshots/11-admin.png) | ![](docs/screenshots/12-drawer.png) |
+
+| Book detail | Camera scanner |
+|---|---|
+| ![](docs/screenshots/13-book-detail.png) | ![](docs/screenshots/14-camera-scanner-modal.png) |

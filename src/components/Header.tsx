@@ -101,8 +101,8 @@ const HeaderComponent: React.FC<HeaderProps> = ({
       {/* Top Banner with Institution Badge */}
       <div className="bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-800 text-white py-1 px-3 sm:px-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          <div className="flex items-center gap-2 min-w-0">
+            <span className="w-2 h-2 shrink-0 rounded-full bg-emerald-400 animate-pulse"></span>
             <span className="text-[10px] sm:text-xs font-extrabold tracking-wider uppercase text-blue-100 truncate">
               SMART LIBRARY PORTAL • CAMPUS CIRCULATION SYSTEM
             </span>
@@ -126,18 +126,18 @@ const HeaderComponent: React.FC<HeaderProps> = ({
               aria-label="Open side menu"
             >
               <Menu className="w-4 h-4 text-blue-600" />
-              <span className="text-xs font-bold">Sections</span>
+              <span className="text-xs font-bold hidden sm:inline">Sections</span>
             </button>
 
             <div
               onClick={() => onScreenChange("home")}
-              className="flex items-center gap-2 cursor-pointer py-0.5 group"
+              className="hidden sm:flex items-center gap-2 cursor-pointer py-0.5 group"
               title="Go to Home"
             >
               <div className="w-8 h-8 rounded-xl bg-stone-900 group-hover:bg-blue-600 text-white flex items-center justify-center transition-colors shadow-xs">
                 <BookOpen className="w-4 h-4" />
               </div>
-              <div className="hidden xs:block">
+              <div className="hidden sm:block">
                 <div className="text-xs sm:text-sm font-bold text-stone-900 tracking-tight leading-tight">
                   Smart Library
                 </div>
@@ -205,7 +205,7 @@ const HeaderComponent: React.FC<HeaderProps> = ({
             <button
               type="button"
               onClick={() => onScreenChange("search")}
-              className={`p-1.5 sm:p-2 rounded-xl text-stone-600 hover:bg-stone-100 transition-colors cursor-pointer ${
+              className={`hidden sm:block p-1.5 sm:p-2 rounded-xl text-stone-600 hover:bg-stone-100 transition-colors cursor-pointer ${
                 activeScreen === "search" ? "bg-blue-50 text-blue-600 font-bold" : ""
               }`}
               title="Search Catalog"

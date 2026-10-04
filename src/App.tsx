@@ -710,11 +710,13 @@ export default function App() {
         />
 
         {/* Floating Section Tool: Quick jump to Left / Right Section from anywhere */}
+<div className="hidden sm:block">
         <FloatingSectionNavigator
           activeScreen={activeScreen}
           onScreenChange={setActiveScreen}
           onOpenSidebar={() => setIsSidebarOpen(true)}
         />
+        </div>
 
         {/* Toast notifications */}
         {toastMessage && <ToastBanner message={toastMessage} onClose={() => setToastMessage(null)} />}
