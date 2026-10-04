@@ -1,0 +1,10 @@
+{
+  "name": "Student Library Portal",
+  "description": "Library catalog management with live barcode scanning, book reservations, student reading interest recommendations, and a daily reading streak tracker with book cover photo check-ins.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
